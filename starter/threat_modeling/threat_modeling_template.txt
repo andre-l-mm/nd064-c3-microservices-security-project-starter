@@ -1,44 +1,8 @@
 Docker Threat Modeling
 Given Docker's system components and the STRIDE framework, identify five potential threats that may arise.
 
-- Elevation of Privilege: With default docker daemon configuration, containers may be able to acquire elevated privileges at runtime through the usage of `suid` and `sgid`. The docker daemon process should be configured with `no_new_priv` bit to prevent child processes from acquiring elevated privileges at runtime.
-- Denial of Service: Docker daemon by default interrupts execution of all containers when it is shut down. Daemon should be configured to prevent containers from being ended during maintenance or in case an attacker manages to intentionally shut down the docker daemon. This is achieved using --live-restore option.
-- Denial of Service: Attackers may be able to launch o fork-bomb attack in containers, putting the entire system down. Using --pids-limit when running a docker image can prevent this kind of attack by limiting the number of forks that can happen in a container.
-- Spoofing: Docker content trust feature is disabled by default in a new docker installation. Through the use of digital signatures, this feature allows the client to validate the integrity and publisher of images. With this feature disabled, a docker installation would be open to spoofing attacks when communicating to a docker registry.
-- Information Disclosure: Docker containers share the same kernel in a host machine. Isolation between different container processes is achieved through the use of linux namespaces. SELinux needs to be enabled in enforcing mode to prevent Container Breakouts which could lead to a container having access to resources managed by the host or another container.
-
 Kubernetes Threat Modeling
 Given Kubernetes' system components and the STRIDE framework, identify five potential threats that may arise.
 
 Docker-bench Run Results and Analysis
 From the failed findings, select and document 3 findings from the Docker-bench results that you want to harden based on the 5 attack surface areas you identified in Step 1. At least 1 of the 3 hardened findings should be different from the ones mentioned in the exercise (i.e. 5.10, 5.14, and 5.22).
-
-The following findings will be hardened:
-
-2.13 Ensure live restore is enabled (Scored)
-
-```
-The --live-restore option enables full support of daemon-less containers within Docker. It ensures that Docker does not stop containers on shutdown or restore and that it properly reconnects to the container when restarted.
-```
-
-Enabling live restore will prevent outages and possibly intentional denial service by shutting down the docker daemon.
-
-**Note:** Only check 2.13.b passes after hardening. 2.13.a remains even though the issue is already fixed. This is because I have provided `live-restore` flag in `/etc/docker/daemon.json` configuration file and restarted the service using systemctl. You are not allowed to provide those flags both in the command line and configuration file. Therefore, there is no way both 2.13.a and 2.13.b can pass at the same time.
-
-2.17 Ensure containers are restricted from acquiring new privileges (Scored)
-
-```
-A process can set the no_new_priv bit in the kernel and this persists across forks, clones and execve. The no_new_priv bit ensures that the process and its child processes do not gain any additional privileges via suid or sgid bits. This reduces the security risks associated with many dangerous operations because there is a much reduced ability to subvert privileged binaries.
-```
-
-Using the --no-new-privileges flag when starting the docker daemon will prevent elevation of privileges through the use of suid and sgid.
-
-**Note:** Only check 2.17.b passes after hardening. 2.17.a remains even though the issue is already fixed. This is because I have provided `no_new_priv` flag in `/etc/docker/daemon.json` configuration file and restarted the service using systemctl. You are not allowed to provide those flags both in the command line and configuration file. Therefore, there is no way both 2.17.a and 2.17.b can pass at the same time.
-
-4.5 Ensure Content trust for Docker is Enabled (Scored)
-
-```
-Content trust provides the ability to use digital signatures for data sent to and received from remote Docker registries. These signatures allow client-side verification of the identity and the publisher of specific image tags and ensures the provenance of container images.
-```
-
-Enabling Docker Content Trust will ensure integrity of docker images and will prevent spoofing attacks when communicating to a docker registry like docker hub.
