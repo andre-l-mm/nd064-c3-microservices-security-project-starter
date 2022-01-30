@@ -1,6 +1,6 @@
-1. Incident commander name:
-2. Executive Summary of what happened:
-3. Summary of what was affected:
-4. Summmry of the impact:
-5. Summary of the remediation steps:
-6. Summary of lessons learned:
+1. Incident commander name: Andre Magalhaes
+2. Executive Summary of what happened: We found three pods running crypto mining software in our kubernetes infrastructure. Three different monero mining applications running as containers.
+3. Summary of what was affected: Existing applications running in our Kubernetes cluster experienced slower response time as a result of this incident.
+4. Summary of the impact: The main immediate consequence is a high CPU utilization affecting the performance of existing applications in the cluster.
+5. Summary of the remediation steps: The administrator already identified the event through Grafana monitoring and purged the pods.
+6. Summary of lessons learned: Access to kubernetes API server should be reviewed to ensure only authorized personnel can run these kinds of commands. Admission controllers and an internal docker registry with reviewed and approved images should also be utilized to prevent unknown images from being started.
