@@ -25,3 +25,6 @@ mkdir -p /home/rke/.ssh
 usermod -d /home/rke/ rke
 cp /root/.ssh/authorized_keys /home/rke/.ssh
 chown rke /home/rke -R
+
+groupadd --gid 52034 etcd
+useradd --comment "etcd service account" --uid 52034 --gid 52034 etcd
