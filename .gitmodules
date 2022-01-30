@@ -1,3 +1,3 @@
 [submodule "vuln_app"]
 	path = vuln_app
-	url = https://github.com/andre-l-mm/dvpwa
+	url = git@github.com:andre-l-mm/dvpwa.git
