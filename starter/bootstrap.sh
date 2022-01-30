@@ -28,3 +28,4 @@ chown rke /home/rke -R
 
 groupadd --gid 52034 etcd
 useradd --comment "etcd service account" --uid 52034 --gid 52034 etcd
+chown etcd:etcd /var/lib/etcd
