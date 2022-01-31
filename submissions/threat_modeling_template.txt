@@ -10,6 +10,12 @@ Given Docker's system components and the STRIDE framework, identify five potenti
 Kubernetes Threat Modeling
 Given Kubernetes' system components and the STRIDE framework, identify five potential threats that may arise.
 
+- Information Disclosure - Access to etcd database files could expose sensitive information, including credentials and secrets. Only the etcd service account should have access to the etcd data directory. The etcd data folder should be protected by changing the ownership of the folder to the etcd user and group and changing the read/write permissions on the folder to 700. In addition, encryption at REST should be enabled as well.
+- Spoofing: Lack of encryption in communications to etcd service will expose the cluster to man in the middle attacks which could leak sensitive information stored in the etcd database. Transport Layer Security (TLS) must be enabled and required in communications to the etcd service.
+- Elevation of Privilege: Unauthorized access to the API server would compromise the security of the entire cluster and open the door to various kinds of attacks. Anonymous and basic authentication should be disabled for the API server. In addition, role-based access control (RBAC) should be enabled for authorization.
+- Denial of Service: Unauthorized access to the Kubelet service will expose the cluster to running malicious images such as crypto mining which could lead to resource exhaustion. The Kubelet service should be configured so that only the API server can communicate to it. This can be achieved by enabling X509 client side authentication (i.e. 2 Way SSL).
+- Information Disclosure: Profiling can leak sensitive system information that could be potentially used by an attacker. API Server profiling should be disabled to prevent this and should only be used for troubleshooting when the cluster is experiencing performance bottlenecks.
+
 Docker-bench Run Results and Analysis
 From the failed findings, select and document 3 findings from the Docker-bench results that you want to harden based on the 5 attack surface areas you identified in Step 1. At least 1 of the 3 hardened findings should be different from the ones mentioned in the exercise (i.e. 5.10, 5.14, and 5.22).
 
